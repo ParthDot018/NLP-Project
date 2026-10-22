@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h3 class="font-bold text-lg text-slate-800 leading-tight group-hover:text-indigo-600 transition-colors">${topic.title}</h3>
                     <span class="bg-indigo-50 text-indigo-700 ring-1 ring-indigo-600/20 text-xs font-bold px-2.5 py-1 rounded-full ml-3 whitespace-nowrap">Pg ${topic.pages}</span>
                 </div>
-                <p class="text-sm text-slate-500 line-clamp-3 leading-relaxed flex-grow">${topic.summary}</p>
+                <p class="text-sm text-slate-500 line-clamp-3 leading-relaxed grow">${topic.summary}</p>
             `;
             
             card.addEventListener('click', () => openQA(topic));
