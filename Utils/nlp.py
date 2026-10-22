@@ -1,4 +1,3 @@
-# utils/nlp_engine.py
 import io
 import uuid
 import nltk
@@ -8,19 +7,13 @@ from pypdf import PdfReader
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-# Ensure NLTK data is downloaded
 nltk.download('punkt', quiet=True)
 nltk.download('punkt_tab', quiet=True)
 nltk.download('stopwords', quiet=True)
 
 class NLP_Methods:
     def __init__(self):
-        # In-memory dictionary to store processed topics
         self.session_data = {}
-
-    # ==========================================
-    # 1. TEXT EXTRACTION (PPTX & PDF)
-    # ==========================================
     
     def _extract_text_from_pptx(self, file_bytes: bytes) -> dict:
         file_stream = io.BytesIO(file_bytes)
@@ -56,10 +49,6 @@ class NLP_Methods:
                 pages_text[i] = ""
         return pages_text
 
-    # ==========================================
-    # 2. TOPIC GROUPING & SUMMARIZATION
-    # ==========================================
-    
     def _generate_topic_title(self, text_block: str) -> str:
         if not text_block.strip():
             return "General Overview"
@@ -145,12 +134,8 @@ class NLP_Methods:
 
         return topics
 
-    # ==========================================
-    # 3. PUBLIC METHODS ROUTER
-    # ==========================================
     
     def process_presentation(self, file_bytes: bytes, filename: str) -> list:
-        """Processes the uploaded file based on its extension."""
         if filename.lower().endswith('.pdf'):
             pages_text = self._extract_text_from_pdf(file_bytes)
         else:
@@ -165,10 +150,6 @@ class NLP_Methods:
             self.session_data[t["id"]] = t
 
         return topics
-
-    # ==========================================
-    # 4. QUESTION & ANSWER
-    # ==========================================
     
     def check_topic_exists(self, topic_id: str) -> bool:
         return topic_id in self.session_data

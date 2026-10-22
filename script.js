@@ -17,7 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentTopicId = null;
 
-    // 1. Handle File Upload
     fileUpload.addEventListener('change', async (e) => {
         const file = e.target.files[0];
         if (!file) return;
@@ -26,7 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
         uploadStatus.classList.remove('hidden', 'text-red-500');
         uploadStatus.classList.add('text-blue-600');
         
-        // Hide previous results if uploading a new file
         topicsSection.classList.add('hidden');
         qaSection.classList.add('hidden');
 
@@ -34,7 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append('file', file);
 
         try {
-            // Call FastAPI upload endpoint
             const response = await fetch('http://localhost:8000/study/upload', {
                 method: 'POST',
                 body: formData
@@ -58,22 +55,22 @@ document.addEventListener('DOMContentLoaded', () => {
         uploadStatus.classList.replace('text-blue-600', 'text-red-500');
     }
 
-    // 2. Render the extracted topics as clickable cards
     function renderTopics(topics) {
         topicsList.innerHTML = ''; 
         topicsSection.classList.remove('hidden');
         
-        // Example expected data structure from backend: 
-        // [{ id: "t1", title: "POS Tagging", pages: "4-10", summary: "Brief overview..." }]
+        const counter = document.getElementById('topic-count');
+        if(counter) counter.textContent = `${topics.length} found`;
+        
         topics.forEach(topic => {
             const card = document.createElement('div');
-            card.className = 'bg-white border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md hover:border-blue-300 cursor-pointer transition flex flex-col h-full';
+            card.className = 'bg-white border border-slate-200 rounded-xl p-6 shadow-sm hover:shadow-lg hover:border-indigo-300 hover:-translate-y-1 cursor-pointer transition-all duration-300 flex flex-col h-full group';
             card.innerHTML = `
-                <div class="flex justify-between items-start mb-3">
-                    <h3 class="font-bold text-lg text-gray-800 leading-tight">${topic.title}</h3>
-                    <span class="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-1 rounded ml-2 whitespace-nowrap">Pg ${topic.pages}</span>
+                <div class="flex justify-between items-start mb-4">
+                    <h3 class="font-bold text-lg text-slate-800 leading-tight group-hover:text-indigo-600 transition-colors">${topic.title}</h3>
+                    <span class="bg-indigo-50 text-indigo-700 ring-1 ring-indigo-600/20 text-xs font-bold px-2.5 py-1 rounded-full ml-3 whitespace-nowrap">Pg ${topic.pages}</span>
                 </div>
-                <p class="text-sm text-gray-500 line-clamp-3">${topic.summary}</p>
+                <p class="text-sm text-slate-500 line-clamp-3 leading-relaxed flex-grow">${topic.summary}</p>
             `;
             
             card.addEventListener('click', () => openQA(topic));
@@ -81,14 +78,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 3. Open Q&A specific to the clicked topic
     function openQA(topic) {
         currentTopicId = topic.id;
         qaTopicTitle.textContent = topic.title;
         qaTopicPages.textContent = `Slides: ${topic.pages}`;
         qaTopicSummary.textContent = topic.summary;
         
-        // Reset inputs and answers
         questionInput.value = '';
         answerBox.classList.add('hidden');
         answerText.textContent = '';
@@ -97,24 +92,20 @@ document.addEventListener('DOMContentLoaded', () => {
         qaSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
-    // Close Q&A
     closeQaBtn.addEventListener('click', () => {
         qaSection.classList.add('hidden');
         currentTopicId = null;
     });
 
-    // 4. Handle Question Submission
     askBtn.addEventListener('click', async () => {
         const question = questionInput.value.trim();
         if (!question || !currentTopicId) return;
 
-        // UI Loading state
         askBtn.textContent = 'Searching...';
         askBtn.disabled = true;
         answerBox.classList.add('hidden');
 
         try {
-            // Call FastAPI ask endpoint
             const response = await fetch('http://localhost:8000/study/ask', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -143,7 +134,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Allow pressing "Enter" in the input field to trigger the Ask button
     questionInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
             askBtn.click();
