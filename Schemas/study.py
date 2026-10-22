@@ -1,4 +1,3 @@
-# Schemas/study.py
 from pydantic import BaseModel, Field
 
 class QuestionRequest(BaseModel):
